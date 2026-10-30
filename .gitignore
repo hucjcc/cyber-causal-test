@@ -1,0 +1,30 @@
+# ===== 本地运行 / 临时文件（非部署所需，勿提交） =====
+server.js
+passwords.json
+data/
+*.bak
+
+# 根目录旧版/临时素材（线上版本在 public/ 内）
+/index.html
+clean_source.jpg
+cleaned_screenshot.jpg
+frame_*.png
+source_screenshot*.jpg
+*_watermark_remover.py
+watermark_remover.py
+video_watermark_remover.py
+
+# 依赖 / 工具 / 系统
+node_modules/
+tmp_pw/
+.workbuddy/
+.DS_Store
+
+# public 内冗余备份（站点未引用，仅本地处理素材用）
+/public/fortune-teller.clean.mp4
+/public/fortune-teller.clean.png
+/public/fortune-teller.pre-feather.png
+/public/fortune-teller.orig-with-watermark.mp4
+/public/fortune-teller.orig-with-watermark.png
+/public/fortune-teller.svg
+/public/fortune-teller_mask.png

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>你上辈子欠了哪种债？｜赛博因果测评</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 密码门禁 + 封面 -->
+  <section class="screen active" id="gate">
+    <div class="cover">
+      <span class="badge">CYBER 因果 · 趣味测评</span>
+      <div class="cover-avatar" id="coverAvatar"></div>
+      <h1>你上辈子<br/><span class="glitch" data-t="欠了哪种债？">欠了哪种债？</span></h1>
+      <div class="sub">24 题扫描你的 <span class="hl">因果信号</span> · 解码前世因、今生课</div>
+      <input id="pwInput" type="text" inputmode="text" autocomplete="off" placeholder="请输入测试密码" />
+      <button class="btn" id="unlockBtn">接 入 测 试 →</button>
+      <div class="err" id="pwErr"></div>
+      <div class="gate-note">每个密码可接入 3 次</div>
+    </div>
+  </section>
+
+  <!-- 答题 -->
+  <section class="screen" id="quiz">
+    <div class="quiz-guide">
+      <div class="mini-avatar" id="guideAvatar"></div>
+      <div class="guide-txt">
+        <b>NEON · AI 占卜师</b>
+        <span>正在扫描你的因果信号，请如实回应</span>
+      </div>
+    </div>
+    <div class="progress"><i id="bar"></i></div>
+    <div class="qcount" id="qcount"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="opts"></div>
+    <div class="nav">
+      <button class="btn ghost" id="prevBtn" onclick="prevQ()">上一题</button>
+      <button class="btn" id="nextBtn" onclick="nextQ()">下一题</button>
+    </div>
+  </section>
+
+  <!-- 结果 -->
+  <section class="screen result" id="result"></section>
+
+</div>
+
+<!-- 好评有礼弹窗 -->
+<div class="modal-mask" id="reviewModal">
+  <div class="modal">
+    <div class="modal-emoji">🎁</div>
+    <h3>好评有礼</h3>
+    <p>亲，店铺好评后，<b>请联系客服并发送好评截图</b>，即可获得 <b>1 元返现</b> 哦～</p>
+    <p class="modal-sub">感谢你的支持，你的每一句评价都是我们继续做好玩测评的动力 ❤</p>
+    <button class="btn" onclick="closeReview()">知道啦</button>
+  </div>
+</div>
+
+<!-- 长图保存弹窗（移动端可长按保存） -->
+<div class="modal-mask" id="imgModal">
+  <div class="modal img-modal">
+    <h3>长按图片保存到相册</h3>
+    <div class="img-box"><img id="imgPreview" alt="测评结果长图" /></div>
+    <div class="modal-btns">
+      <button class="btn ghost" id="dlBtn">下载到电脑</button>
+      <button class="btn" onclick="closeImg()">完成</button>
+    </div>
+  </div>
+</div>
+
+<!-- 轻提示 -->
+<div class="toast" id="toast"></div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
