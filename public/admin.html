@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>后台管理 · 赛博因果测评</title>
+<style>
+  :root{ --cyan:#05d9e8; --mag:#d300c5; --bg:#07060f; --line:rgba(5,217,232,.25); --sub:#9aa; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,system-ui,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',sans-serif;background:radial-gradient(circle at 50% 0%, #1a0b2e, var(--bg));color:#e8f6ff;min-height:100vh;padding:24px;display:flex;justify-content:center}
+  .wrap{width:100%;max-width:560px}
+  h1{font-size:20px;letter-spacing:2px;color:#fff;text-shadow:0 0 12px var(--cyan);margin:0 0 4px}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:18px}
+  .card{background:rgba(10,8,22,.7);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 0 24px rgba(211,0,197,.15)}
+  input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:rgba(7,6,15,.7);color:#e8f6ff;font-size:15px;margin-bottom:10px;outline:none}
+  button{cursor:pointer;border:none;border-radius:10px;padding:11px 16px;font-size:14px;font-weight:700;letter-spacing:1px;background:linear-gradient(90deg,var(--cyan),var(--mag));color:#04030a}
+  button.del{background:rgba(255,92,138,.15);color:#ff8fb0;border:1px solid rgba(255,92,138,.4);padding:6px 12px;font-size:12px}
+  button.ghost{background:rgba(255,255,255,.1);color:#cdd}
+  .row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .row:last-child{border-bottom:none}
+  .row .pw{flex:1;font-family:monospace;color:var(--cyan)}
+  .row .ct{color:var(--sub);font-size:13px}
+  .msg{min-height:18px;font-size:13px;margin-bottom:6px}
+  hr{border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0}
+  .head{display:flex;gap:12px;padding-bottom:4px;color:var(--sub);font-size:13px}
+  .head b{flex:1;color:#cfe}
+  .hide{display:none}
+  .hint{color:var(--sub);font-size:12px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>后台管理</h1>
+  <div class="sub">管理测试密码 · 查看使用统计 · 重置次数</div>
+
+  <div id="loginSec" class="card">
+    <input id="adminInput" type="password" placeholder="请输入管理密码" autocomplete="off">
+    <button id="loginBtn">登录</button>
+    <div id="loginMsg" class="msg"></div>
+  </div>
+
+  <div id="dashSec" class="card hide">
+    <div class="head"><b>密码</b><span>使用次数</span></div>
+    <div id="list"></div>
+    <div id="dashMsg" class="msg"></div>
+
+    <hr>
+    <h3 style="font-size:14px;margin:0 0 8px">添加密码</h3>
+    <input id="addInput" placeholder="输入新测试密码">
+    <button id="addBtn">添加</button>
+
+    <hr>
+    <button id="resetBtn">一键重置所有次数</button>
+
+    <hr>
+    <h3 style="font-size:14px;margin:0 0 8px">修改管理密码</h3>
+    <input id="oldPw" type="password" placeholder="原管理密码">
+    <input id="newPw" type="password" placeholder="新管理密码">
+    <button id="chgBtn">修改</button>
+
+    <hr>
+    <button id="logoutBtn" class="ghost">退出登录</button>
+  </div>
+</div>
+<script src="config.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

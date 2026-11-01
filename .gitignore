@@ -1,6 +1,7 @@
 # ===== 本地运行 / 临时文件（非部署所需，勿提交） =====
 server.js
 passwords.json
+admin.json
 data/
 *.bak
 
