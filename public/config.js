@@ -7,8 +7,8 @@
 // 填好后把 USE_SUPABASE 改为 true（本地用 node server.js 调试时可保持 false）。
 // =============================================================
 window.APP_CONFIG = {
-  USE_SUPABASE: false,                                       // ← 部署上线后改为 true
-  SUPABASE_URL: "https://YOUR-PROJECT-REF.supabase.co",       // ← 你的 Project URL
-  SUPABASE_ANON_KEY: "YOUR-ANON-KEY",                          // ← 你的 anon / public key
+  USE_SUPABASE: true,                                         // ← 已上线 Supabase，开启
+  SUPABASE_URL: "https://nttovdfecwpyvgxhwevh.supabase.co",    // ← 你的 Project URL
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50d292ZGZlY3dweXZneGh3dmVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMzU2MDcsImV4cCI6MjEwODkxMTYwN30.G9TnUl5Y_9iLpNv4pcAR-Gj8N6PGy-DHR4NIxvkDDfY", // ← 你的 anon / public key
   MAX_TESTS: 3                                               // 每个密码可接入次数
 };
