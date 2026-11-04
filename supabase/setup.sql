@@ -74,9 +74,11 @@ create table if not exists public.admin_config (
   val text
 );
 
--- 8) 哈希辅助（immutable，不碰表）
+-- 8) 哈希辅助（immutable，不碰表；pgcrypto 默认装在 extensions schema，必须显式指定，否则函数运行时 search_path 找不到 digest 会报错）
 create or replace function public.admin_pw_hash(p text) returns text
-language sql immutable as $$ select encode(digest(p,'sha256'),'hex'); $$;
+language sql immutable
+set search_path = public, extensions
+as $$ select encode(extensions.digest(p,'sha256'),'hex'); $$;
 
 -- 9) 校验管理员密码
 create or replace function public.admin_auth(admin_pw text) returns boolean
