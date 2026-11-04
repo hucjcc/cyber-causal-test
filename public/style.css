@@ -104,11 +104,11 @@ body::after{
   -webkit-mask-mode:alpha; mask-mode:alpha;
   pointer-events:none;}
 /* 内联 SVG 算命先生：矢量、即时渲染、天然透明，替代体积大且易失效的视频 */
-.cover-avatar .ft-svg, .result-avatar .ft-svg{
-  width:90%; height:90%;
+.cover-avatar .ft-fig, .result-avatar .ft-fig{
+  width:90%; height:90%; object-fit:contain;
   animation:ftFloat 4.6s ease-in-out infinite; will-change:transform;
   filter:drop-shadow(0 0 16px rgba(5,217,232,.35));}
-.mini-avatar .ft-svg{ width:100%; height:100%; }
+.mini-avatar .ft-fig{ width:100%; height:100%; object-fit:contain; }
 /* poster 同样走羽化，避免视频加载前出现方形硬边 */
 .ft-poster{
   -webkit-mask-image:url("ft-mask.png"); mask-image:url("ft-mask.png");
@@ -155,9 +155,7 @@ h1 .glitch::after{color:var(--cyan);animation:glitchB 2.4s infinite linear alter
 /* 正方形容器，确保 768×768 的羽化遮罩不被拉伸变形 */
 .quiz-guide .mini-avatar{width:48px;height:48px;flex:0 0 auto;}
 /* 小头像用更窄的羽化遮罩，避免 46px 下人物被羽化吃掉 */
-.quiz-guide .mini-avatar .ft-video{
-  -webkit-mask-image:url("ft-mask-mini.png"); mask-image:url("ft-mask-mini.png");
-  -webkit-mask-size:100% 100%; mask-size:100% 100%;}
+.quiz-guide .mini-avatar .ft-fig{ width:100%; height:100%; object-fit:contain; }
 .quiz-guide .guide-txt b{font-family:var(--font-disp);color:var(--cyan);font-size:12px;letter-spacing:2px;display:block;}
 .quiz-guide .guide-txt span{font-size:12.5px;color:var(--sub);}
 .progress{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin-bottom:10px;

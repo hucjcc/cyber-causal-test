@@ -106,9 +106,11 @@ function comboText(a,b){
    且自动播放被拦截或遮罩(ft-mask.png)偶发加载失败时人物会“消失”。
    改为内联 SVG 算命先生后：即时显示、不依赖大文件、自带浮动/罗盘旋转/光晕/上升符文动画，
    天然透明、无需 mask。 */
+const FT_FIG = '<img class="ft-fig" src="fortune-teller-art.png" alt="赛博道士" draggable="false">';
+
 function mountFt(el, uid){
   if(!el) return;
-  el.innerHTML = fortuneTellerSVG(uid);
+  el.innerHTML = FT_FIG;
 }
 
 /* ===================== 赛博角色 SVG ===================== */
@@ -371,7 +373,7 @@ function renderResult(r){
 
   document.getElementById('result').innerHTML = `
     ${banner}
-    <div class="result-avatar">${fortuneTellerSVG('result')}</div>
+    <div class="result-avatar">${FT_FIG}</div>
     <h2>${headTitle}</h2>
     <div class="ptag">${headSub}</div>
     <div class="panel bars">
