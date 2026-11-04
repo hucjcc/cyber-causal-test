@@ -109,6 +109,37 @@
     if (r && r.ok) { showMsg('管理密码已修改，请用新密码重新登录', true); adminPw = n; setTimeout(logout, 900); }
     else showMsg((r && r.reason) || '修改失败', false);
   }
+
+  // ---------- 批量生成测评密码 ----------
+  let lastGen = [];  // 本次生成的密码，用于导出
+  async function doGenerate() {
+    const n = parseInt($('#genCount').value, 10);
+    if (!n || n < 1 || n > 200) { showMsg('请输入 1-200 之间的数量', false); return; }
+    showMsg('正在生成…', true);
+    const r = await call('admin_generate_passwords', { n: n, admin_pw: adminPw });
+    if (r && r.ok) {
+      lastGen = r.list || [];
+      $('#genInfo').textContent = '已生成 ' + lastGen.length + ' 个密码（已自动入库）：';
+      const gl = $('#genList'); gl.innerHTML = '';
+      lastGen.forEach(p => { const d = document.createElement('div'); d.textContent = p; gl.appendChild(d); });
+      $('#genResult').classList.remove('hide');
+      showMsg('生成成功，共 ' + lastGen.length + ' 个', true);
+      await refresh();  // 刷新主列表，显示新密码
+    } else {
+      showMsg((r && r.reason) || '生成失败', false);
+    }
+  }
+  async function doExport() {
+    if (!lastGen.length) { showMsg('没有可导出的密码，请先生成', false); return; }
+    const text = lastGen.join('\n');
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '测评密码_' + lastGen.length + '个.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(a.href);
+    showMsg('已导出 ' + lastGen.length + ' 个密码', true);
+  }
   function logout() {
     adminPw = '';
     dashSec.classList.add('hide');
@@ -121,5 +152,7 @@
   $('#addBtn').onclick = doAdd;
   $('#resetBtn').onclick = doReset;
   $('#chgBtn').onclick = doChange;
+  $('#genBtn').onclick = doGenerate;
+  $('#exportBtn').onclick = doExport;
   $('#logoutBtn').onclick = logout;
 })();

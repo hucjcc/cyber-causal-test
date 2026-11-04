@@ -45,6 +45,19 @@
     <div id="dashMsg" class="msg"></div>
 
     <hr>
+    <h3 style="font-size:14px;margin:0 0 8px">批量生成测评密码</h3>
+    <div style="display:flex;gap:10px;align-items:center">
+      <input id="genCount" type="number" min="1" max="200" value="10" style="width:120px;margin-bottom:0">
+      <button id="genBtn">生成</button>
+    </div>
+    <div class="hint">数量 1-200。自动生成 16 位高强度随机密码（128 位熵），生成后直接入库可用。</div>
+    <div id="genResult" class="hide" style="margin-top:10px">
+      <div class="hint" id="genInfo"></div>
+      <div id="genList" style="font-family:monospace;font-size:13px;color:var(--cyan);max-height:170px;overflow:auto;margin:6px 0;line-height:1.7"></div>
+      <button id="exportBtn" class="ghost">导出本次生成的密码（.txt）</button>
+    </div>
+
+    <hr>
     <h3 style="font-size:14px;margin:0 0 8px">添加密码</h3>
     <input id="addInput" placeholder="输入新测试密码">
     <button id="addBtn">添加</button>

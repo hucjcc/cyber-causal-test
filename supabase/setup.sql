@@ -138,13 +138,32 @@ begin
   return json_build_object('ok',true);
 end; $$;
 
--- 15) 授权匿名调用（仅这 6 个后台函数，无法直接读表）
+-- 15) 批量生成测评密码（高强度随机，生成后直接入库可用）
+create or replace function public.admin_generate_passwords(n int, admin_pw text) returns json
+language plpgsql security definer set search_path = public, extensions as $$
+declare
+  i int;
+  pw text;
+  arr text[] := '{}';
+begin
+  if not public.admin_auth(admin_pw) then return json_build_object('ok',false,'reason','未授权'); end if;
+  if n is null or n < 1 or n > 200 then return json_build_object('ok',false,'reason','数量需在 1-200 之间'); end if;
+  for i in 1..n loop
+    pw := encode(extensions.gen_random_bytes(8),'hex');
+    insert into public.passwords(password) values (pw) on conflict (password) do nothing;
+    arr := array_append(arr, pw);
+  end loop;
+  return json_build_object('ok',true,'list', to_json(arr));
+end; $$;
+
+-- 16) 授权匿名调用（仅这些后台函数，无法直接读表）
 grant execute on function public.admin_auth(text)                  to anon, authenticated;
 grant execute on function public.admin_list(text)                 to anon, authenticated;
 grant execute on function public.admin_add_password(text,text)     to anon, authenticated;
 grant execute on function public.admin_remove_password(text,text)  to anon, authenticated;
 grant execute on function public.admin_reset_usage(text)          to anon, authenticated;
 grant execute on function public.admin_change_pw(text,text)       to anon, authenticated;
+grant execute on function public.admin_generate_passwords(int,text) to anon, authenticated;
 
 -- 16) 初始管理员密码（部署时设置；之后可在后台自行修改）
 insert into public.admin_config(key, val) values ('admin_pw', public.admin_pw_hash('061777'))
