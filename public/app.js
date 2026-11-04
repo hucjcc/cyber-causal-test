@@ -101,26 +101,14 @@ function comboText(a,b){
   return DEBTS[a].title+" × "+DEBTS[b].title+"：你身上既有"+DEBTS[a].name+"的牵绊，也有"+DEBTS[b].name+"的执念，是个层次很丰富的人。";
 }
 
-/* ===================== 算命先生动画视频 ===================== */
-/* 边缘羽化由 CSS mask-image: ft-mask.png 完成（像素级遮罩，四边均匀羽化，
-   最外圈 alpha 严格为 0），因此视频/海报都无硬边、无白黑描边。
-   poster 保持原图，由同一条 CSS 遮罩羽化 —— 与视频帧的过渡完全一致，
-   不会出现"海报羽化+遮罩羽化"叠加导致的过度虚化。 */
-const FT_VIDEO = '<video class="ft-video" autoplay loop muted playsinline preload="auto" poster="fortune-teller.png"><source src="fortune-teller.mp4" type="video/mp4"></video>';
-
-/* 插入算命先生视频并强制播放：部分浏览器（尤其 WebView / 无用户手势环境）
-   会拦截 HTML autoplay，停在 poster 静态帧，表现为“动效消失”。
-   这里显式 muted+play() 兜底；即使被拦截，CSS 浮动动效仍保证人物在动。 */
-function mountFt(el){
+/* ===================== 算命先生（沉浸式 SVG，矢量 / 即时渲染 / 零下载） ===================== */
+/* 说明：此前用羽化视频(fortune-teller.mp4)做人物，但视频体积大(>1MB)导致首屏很慢，
+   且自动播放被拦截或遮罩(ft-mask.png)偶发加载失败时人物会“消失”。
+   改为内联 SVG 算命先生后：即时显示、不依赖大文件、自带浮动/罗盘旋转/光晕/上升符文动画，
+   天然透明、无需 mask。 */
+function mountFt(el, uid){
   if(!el) return;
-  el.innerHTML = FT_VIDEO;
-  const v = el.querySelector('.ft-video');
-  if(!v) return;
-  v.muted = true;
-  const p = v.play();
-  if(p && p.catch) p.catch(()=>{});
-  // 个别内核 readyState 较晚，loadeddata 后再补一次 play
-  v.addEventListener('loadeddata', ()=>{ const q=v.play(); if(q&&q.catch) q.catch(()=>{}); }, { once:true });
+  el.innerHTML = fortuneTellerSVG(uid);
 }
 
 /* ===================== 赛博角色 SVG ===================== */
@@ -345,7 +333,7 @@ function renderResult(r){
 
   document.getElementById('result').innerHTML = `
     ${banner}
-    <div class="result-avatar">${FT_VIDEO}</div>
+    <div class="result-avatar">${fortuneTellerSVG('result')}</div>
     <h2>${headTitle}</h2>
     <div class="ptag">${headSub}</div>
     <div class="panel bars">
@@ -594,8 +582,8 @@ function show(id){
 
 /* ===================== 初始化 ===================== */
 window.addEventListener('load',()=>{
-  mountFt(document.getElementById('coverAvatar'));
-  mountFt(document.getElementById('guideAvatar'));
+  mountFt(document.getElementById('coverAvatar'), 'cover');
+  mountFt(document.getElementById('guideAvatar'), 'guide');
   document.getElementById('unlockBtn').onclick = unlock;
   document.getElementById('pwInput').addEventListener('keydown',e=>{ if(e.key==='Enter') unlock(); });
   document.getElementById('reviewModal').addEventListener('click',e=>{ if(e.target.id==='reviewModal') closeReview(); });

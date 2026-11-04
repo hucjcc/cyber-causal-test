@@ -103,6 +103,12 @@ body::after{
   -webkit-mask-position:center; mask-position:center;
   -webkit-mask-mode:alpha; mask-mode:alpha;
   pointer-events:none;}
+/* 内联 SVG 算命先生：矢量、即时渲染、天然透明，替代体积大且易失效的视频 */
+.cover-avatar .ft-svg, .result-avatar .ft-svg{
+  width:90%; height:90%;
+  animation:ftFloat 4.6s ease-in-out infinite; will-change:transform;
+  filter:drop-shadow(0 0 16px rgba(5,217,232,.35));}
+.mini-avatar .ft-svg{ width:100%; height:100%; }
 /* poster 同样走羽化，避免视频加载前出现方形硬边 */
 .ft-poster{
   -webkit-mask-image:url("ft-mask.png"); mask-image:url("ft-mask.png");
