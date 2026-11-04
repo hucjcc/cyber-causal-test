@@ -135,96 +135,134 @@ function cyberAvatarSVG(color){
 /* ===================== 透明背景动画：中式算命先生 ===================== */
 function fortuneTellerSVG(uid){
   const u = uid ? '_'+uid : '';
-  return `<svg class="ft-svg" viewBox="0 0 360 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  return `<svg class="ft-svg" viewBox="0 0 360 440" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
     <defs>
-      <radialGradient id="ftAura${u}" cx="50%" cy="55%" r="55%">
-        <stop offset="0%" stop-color="#05d9e8" stop-opacity="0.32"/>
-        <stop offset="60%" stop-color="#ff2a6d" stop-opacity="0.12"/>
+      <radialGradient id="ftAura${u}" cx="50%" cy="50%" r="55%">
+        <stop offset="0%" stop-color="#05d9e8" stop-opacity="0.30"/>
+        <stop offset="55%" stop-color="#9b5cff" stop-opacity="0.12"/>
         <stop offset="100%" stop-color="#ff2a6d" stop-opacity="0"/>
       </radialGradient>
       <linearGradient id="ftRobe${u}" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#1a1030"/><stop offset="100%" stop-color="#0a0618"/>
+        <stop offset="0%" stop-color="#33205e"/>
+        <stop offset="55%" stop-color="#180d34"/>
+        <stop offset="100%" stop-color="#0a0618"/>
       </linearGradient>
-      <linearGradient id="ftCompassGrad${u}" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#05d9e8"/><stop offset="100%" stop-color="#ff2a6d"/>
+      <linearGradient id="ftGold${u}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffe9a8"/>
+        <stop offset="50%" stop-color="#f9c84b"/>
+        <stop offset="100%" stop-color="#b8842a"/>
       </linearGradient>
+      <radialGradient id="ftFace${u}" cx="50%" cy="40%" r="62%">
+        <stop offset="0%" stop-color="#ffe6cb"/>
+        <stop offset="100%" stop-color="#e3ad84"/>
+      </radialGradient>
       <filter id="ftGlow${u}" x="-60%" y="-60%" width="220%" height="220%">
-        <feGaussianBlur stdDeviation="3" result="b"/>
+        <feGaussianBlur stdDeviation="2.4" result="b"/>
         <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     </defs>
 
-    <ellipse cx="180" cy="230" rx="150" ry="160" fill="url(#ftAura${u})">
-      <animate attributeName="opacity" values="0.65;1;0.65" dur="5s" repeatCount="indefinite"/>
+    <ellipse cx="180" cy="238" rx="152" ry="170" fill="url(#ftAura${u})">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="5s" repeatCount="indefinite"/>
     </ellipse>
 
+    <!-- 背后旋转光环 -->
+    <g opacity="0.5">
+      <circle cx="180" cy="226" r="140" fill="none" stroke="url(#ftGold${u})" stroke-width="1.1" opacity="0.4"/>
+      <circle cx="180" cy="226" r="124" fill="none" stroke="#05d9e8" stroke-width="0.8" opacity="0.3"/>
+      <g fill="#f9f871">
+        <animateTransform attributeName="transform" type="rotate" values="0 180 226;360 180 226" dur="50s" repeatCount="indefinite"/>
+        <circle cx="180" cy="100" r="2.4"/><circle cx="273" cy="134" r="2.4"/>
+        <circle cx="313" cy="226" r="2.4"/><circle cx="273" cy="318" r="2.4"/>
+        <circle cx="180" cy="352" r="2.4"/><circle cx="87" cy="318" r="2.4"/>
+        <circle cx="47" cy="226" r="2.4"/><circle cx="87" cy="134" r="2.4"/>
+      </g>
+    </g>
+
     <g id="ftFigure${u}">
-      <animateTransform attributeName="transform" type="translate" values="0 0;0 -5;0 0" dur="5s"
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 -6;0 0" dur="5.5s"
         calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" repeatCount="indefinite"/>
 
-      <path d="M180 180 C140 185 120 210 110 260 L95 400 L265 400 L250 260 C240 210 220 185 180 180 Z"
-            fill="url(#ftRobe${u})" stroke="#3a2a5a" stroke-width="2"/>
-      <path d="M180 185 L180 400" stroke="#f9f871" stroke-width="2" opacity="0.45"/>
-      <path d="M150 232 Q180 252 210 232" stroke="#f9f871" stroke-width="1.5" fill="none" opacity="0.4"/>
+      <!-- 道袍 -->
+      <path d="M180 206 C146 208 124 224 112 252 L88 332 Q80 368 104 380 L138 368 L138 302 Q180 314 222 302 L222 368 L256 380 Q280 368 272 332 L248 252 C236 224 214 208 180 206 Z"
+            fill="url(#ftRobe${u})" stroke="#4a356e" stroke-width="2"/>
+      <!-- 腰带 + 飘带 -->
+      <rect x="118" y="300" width="124" height="17" rx="8.5" fill="url(#ftGold${u})"/>
+      <path d="M150 317 Q146 358 152 404" stroke="url(#ftGold${u})" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M210 317 Q214 358 208 404" stroke="url(#ftGold${u})" stroke-width="4" fill="none" stroke-linecap="round"/>
 
-      <ellipse cx="180" cy="150" rx="34" ry="38" fill="#e8c9a0"/>
-      <path d="M150 120 Q180 95 210 120 L214 130 Q180 112 146 130 Z" fill="#120a22" stroke="#f9f871" stroke-width="1.5"/>
-      <circle cx="180" cy="106" r="5" fill="#ff2a6d" filter="url(#ftGlow${u})">
-        <animate attributeName="opacity" values="0.6;1;0.6" dur="2.6s" repeatCount="indefinite"/>
-      </circle>
-      <path d="M166 150 q6 5 12 0" stroke="#3a2a2a" stroke-width="2" fill="none"/>
-      <path d="M188 150 q6 5 12 0" stroke="#3a2a2a" stroke-width="2" fill="none"/>
-      <path d="M168 168 Q180 212 192 168 Q186 178 180 178 Q174 178 168 168 Z" fill="#f3f3f3">
-        <animateTransform attributeName="transform" type="rotate" values="-1.5 180 168;1.5 180 168;-1.5 180 168" dur="6s"
-          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" repeatCount="indefinite"/>
-      </path>
-
-      <g>
-        <animateTransform attributeName="transform" type="rotate" values="-5 150 195;5 150 195;-5 150 195" dur="4.5s"
-          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" repeatCount="indefinite"/>
-        <path d="M150 195 Q118 222 150 252 L170 252 Q150 226 170 200 Z" fill="url(#ftRobe${u})" stroke="#3a2a5a" stroke-width="2"/>
-        <circle cx="160" cy="252" r="9" fill="#e8c9a0"/>
-      </g>
-      <g>
-        <animateTransform attributeName="transform" type="rotate" values="5 210 195;-5 210 195;5 210 195" dur="4.5s"
-          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" repeatCount="indefinite"/>
-        <path d="M210 195 Q242 222 210 252 L190 252 Q210 226 190 200 Z" fill="url(#ftRobe${u})" stroke="#3a2a5a" stroke-width="2"/>
-        <circle cx="200" cy="252" r="9" fill="#e8c9a0"/>
-      </g>
-
-      <g id="ftCompassG${u}">
-        <circle cx="180" cy="252" r="30" fill="#0a0618" stroke="url(#ftCompassGrad${u})" stroke-width="3" filter="url(#ftGlow${u})">
-          <animate attributeName="opacity" values="0.85;1;0.85" dur="3s" repeatCount="indefinite"/>
+      <!-- 双手捧八卦盘 -->
+      <g transform="translate(180 300)">
+        <circle r="27" fill="#0a0618" stroke="url(#ftGold${u})" stroke-width="2.5" filter="url(#ftGlow${u})">
+          <animate attributeName="opacity" values="0.85;1;0.85" dur="3.4s" repeatCount="indefinite"/>
         </circle>
-        <g>
-          <animateTransform attributeName="transform" type="rotate" values="0 180 252;360 180 252" dur="18s" repeatCount="indefinite"/>
-          <circle cx="180" cy="252" r="22" fill="none" stroke="#05d9e8" stroke-width="1" opacity="0.7"/>
-          <line x1="180" y1="234" x2="180" y2="240" stroke="#f9f871" stroke-width="2"/>
-          <line x1="180" y1="264" x2="180" y2="270" stroke="#f9f871" stroke-width="2"/>
-          <line x1="162" y1="252" x2="168" y2="252" stroke="#f9f871" stroke-width="2"/>
-          <line x1="192" y1="252" x2="198" y2="252" stroke="#f9f871" stroke-width="2"/>
+        <g font-size="12" fill="#f9f871" text-anchor="middle" dominant-baseline="central" font-family="serif">
+          <animateTransform attributeName="transform" type="rotate" values="0;360" dur="22s" repeatCount="indefinite"/>
+          <text x="0" y="-15">☰</text><text x="10.6" y="-10.6">☱</text>
+          <text x="15" y="0">☲</text><text x="10.6" y="10.6">☳</text>
+          <text x="0" y="15">☴</text><text x="-10.6" y="10.6">☵</text>
+          <text x="-15" y="0">☶</text><text x="-10.6" y="-10.6">☷</text>
         </g>
-        <circle cx="180" cy="252" r="6" fill="#ff2a6d" filter="url(#ftGlow${u})"/>
+        <circle r="6" fill="none" stroke="#05d9e8" stroke-width="1.4"/>
+        <circle cx="0" cy="-3" r="1.6" fill="#05d9e8"/><circle cx="0" cy="3" r="1.6" fill="#ff2a6d"/>
       </g>
+      <!-- 双手 -->
+      <path d="M150 300 Q166 288 180 296 Q172 305 156 309 Z" fill="url(#ftFace${u})" stroke="#caa46a" stroke-width="1"/>
+      <path d="M210 300 Q194 288 180 296 Q188 305 204 309 Z" fill="url(#ftFace${u})" stroke="#caa46a" stroke-width="1"/>
 
+      <!-- 头 -->
       <g>
-        <animateTransform attributeName="transform" type="translate" values="0 0;6 -8;0 0" dur="7s"
-          calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" repeatCount="indefinite"/>
-        <text x="64" y="118" fill="#05d9e8" font-size="22" opacity="0.7">☰</text>
-        <text x="276" y="160" fill="#ff2a6d" font-size="18" opacity="0.7">☷</text>
-        <text x="300" y="96" fill="#f9f871" font-size="16" opacity="0.6">✦</text>
+        <ellipse cx="180" cy="160" rx="36" ry="41" fill="url(#ftFace${u})"/>
+        <ellipse cx="144" cy="162" rx="5" ry="9" fill="url(#ftFace${u})"/>
+        <ellipse cx="216" cy="162" rx="5" ry="9" fill="url(#ftFace${u})"/>
+        <rect x="167" y="194" width="26" height="16" rx="8" fill="url(#ftFace${u})"/>
+        <path d="M158 148 Q170 140 183 147" fill="none" stroke="#6b4a2a" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M177 147 Q190 140 202 148" fill="none" stroke="#6b4a2a" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M160 158 Q171 152 182 158" fill="none" stroke="#3a2a2a" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M178 158 Q189 152 200 158" fill="none" stroke="#3a2a2a" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M180 160 L175 174 Q180 178 185 174" fill="none" stroke="#bd8a63" stroke-width="2" stroke-linecap="round"/>
+        <path d="M171 184 Q180 190 189 184" fill="none" stroke="#a85a4a" stroke-width="2" stroke-linecap="round"/>
+        <path d="M148 140 Q142 170 152 200" fill="none" stroke="#dcd2c0" stroke-width="2" opacity="0.75"/>
+        <path d="M212 140 Q218 170 208 200" fill="none" stroke="#dcd2c0" stroke-width="2" opacity="0.75"/>
+        <g fill="none" stroke="#f3efe6" stroke-width="2.2" stroke-linecap="round" opacity="0.95">
+          <animateTransform attributeName="transform" type="rotate" values="-1.5 180 190;1.5 180 190;-1.5 180 190" dur="5s"
+            calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.6 1;0.4 0 0.6 1" repeatCount="indefinite"/>
+          <path d="M167 186 Q159 214 166 256 Q170 280 163 312"/>
+          <path d="M180 188 Q180 224 180 274 Q180 300 180 332"/>
+          <path d="M193 186 Q201 214 194 256 Q190 280 197 312"/>
+        </g>
       </g>
 
+      <!-- 交领右衽 -->
+      <path d="M150 212 L180 252 L210 212 L196 206 L180 238 L164 206 Z" fill="#0a0618" stroke="url(#ftGold${u})" stroke-width="1.6"/>
+      <path d="M150 212 L180 252 L210 212" fill="none" stroke="url(#ftGold${u})" stroke-width="3" stroke-linecap="round"/>
+
+      <!-- 道冠（混元巾）-->
+      <g>
+        <path d="M150 122 Q150 86 180 86 Q210 86 210 122 Z" fill="url(#ftRobe${u})" stroke="url(#ftGold${u})" stroke-width="2"/>
+        <rect x="150" y="112" width="60" height="22" rx="10" fill="url(#ftRobe${u})" stroke="url(#ftGold${u})" stroke-width="1.4"/>
+        <circle cx="180" cy="84" r="6" fill="url(#ftGold${u})" filter="url(#ftGlow${u})">
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="2.6s" repeatCount="indefinite"/>
+        </circle>
+        <g transform="translate(180 124)">
+          <circle r="11" fill="#0a0618" stroke="url(#ftGold${u})" stroke-width="1.4"/>
+          <path d="M0,-11 A11,11 0 0,1 0,11 A5.5,5.5 0 0,1 0,0 A5.5,5.5 0 0,0 0,-11 Z" fill="#05d9e8"/>
+          <path d="M0,-11 A11,11 0 0,0 0,11 A5.5,5.5 0 0,0 0,0 A5.5,5.5 0 0,1 0,-11 Z" fill="#ff2a6d"/>
+          <circle cx="0" cy="-5.5" r="1.6" fill="#fff"/><circle cx="0" cy="5.5" r="1.6" fill="#fff"/>
+        </g>
+      </g>
+
+      <!-- 上升符文 -->
       <g fill="none" stroke="#cfe9ff" stroke-width="3" stroke-linecap="round">
-        <path d="M180 202 q-10 -30 4 -55 q12 -22 -2 -50">
+        <path d="M180 210 q-10 -30 4 -55 q12 -22 -2 -50">
           <animate attributeName="opacity" values="0;0.55;0.55;0" keyTimes="0;0.2;0.7;1" dur="6s" begin="0s" repeatCount="indefinite"/>
           <animateTransform attributeName="transform" type="translate" values="0 0;-6 -120" dur="6s" begin="0s" repeatCount="indefinite"/>
         </path>
-        <path d="M170 206 q12 -28 -4 -52 q-10 -20 6 -46">
+        <path d="M170 214 q12 -28 -4 -52 q-10 -20 6 -46">
           <animate attributeName="opacity" values="0;0.45;0.45;0" keyTimes="0;0.2;0.7;1" dur="6s" begin="2s" repeatCount="indefinite"/>
           <animateTransform attributeName="transform" type="translate" values="0 0;8 -120" dur="6s" begin="2s" repeatCount="indefinite"/>
         </path>
-        <path d="M190 206 q-8 -26 6 -50 q10 -18 -4 -44">
+        <path d="M190 214 q-8 -26 6 -50 q10 -18 -4 -44">
           <animate attributeName="opacity" values="0;0.5;0.5;0" keyTimes="0;0.2;0.7;1" dur="6s" begin="4s" repeatCount="indefinite"/>
           <animateTransform attributeName="transform" type="translate" values="0 0;4 -120" dur="6s" begin="4s" repeatCount="indefinite"/>
         </path>
