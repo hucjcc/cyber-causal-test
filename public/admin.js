@@ -55,7 +55,8 @@
     const pw = $('#adminInput').value.trim();
     if (!pw) { showMsg('请输入管理密码', false); return; }
     const res = await call('admin_auth', { admin_pw: pw });
-    if (res && res.ok) {
+    // 兼容两种后端返回：本地 {ok:true} / Supabase 裸布尔 true
+    if (res === true || res === 'true' || (res && res.ok)) {
       adminPw = pw;
       loginSec.classList.add('hide');
       dashSec.classList.remove('hide');
