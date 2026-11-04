@@ -63,7 +63,9 @@
       loginMsg.textContent = '';
       await refresh();
     } else {
-      showMsg('管理密码错误', false);
+      let detail = '';
+      try { detail = '（后端返回：' + JSON.stringify(res).slice(0, 140) + '）'; } catch (e) {}
+      showMsg('管理密码错误' + detail, false);
     }
   }
 
