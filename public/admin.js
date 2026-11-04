@@ -69,24 +69,74 @@
     }
   }
 
-  async function refresh() {
-    const res = await call('admin_list', { admin_pw: adminPw });
-    if (!res || !res.ok) { showMsg(res && res.reason || '加载失败', false); return; }
+  const MAX = (cfg.MAX_TESTS && cfg.MAX_TESTS > 0) ? cfg.MAX_TESTS : 3;  // 每个密码总次数上限
+  let allRows = [];  // 全量密码记录（含 batch / created_at）
+
+  // 当前筛选条件下的记录
+  function getFiltered() {
+    const fb = $('#filterBatch').value;
+    const fs = $('#filterStatus').value;
+    return allRows.filter((it) => {
+      const used = it.count || 0;
+      const avail = MAX - used;
+      if (fb && (it.batch || '手动/初始') !== fb) return false;
+      if (fs === 'ok' && avail <= 0) return false;
+      if (fs === 'no' && avail > 0) return false;
+      return true;
+    });
+  }
+
+  // 时间格式化：2026-11-04T14:12:25+00:00 → 2026-11-04 22:12:25（本地时区）
+  function fmtDate(s) {
+    if (!s) return '—';
+    const d = new Date(s);
+    if (isNaN(d)) return s;
+    const p = (n) => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' +
+           p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+  }
+
+  // 渲染批次下拉（去重排序）
+  function populateBatchFilter() {
+    const sel = $('#filterBatch');
+    const cur = sel.value;
+    const batches = Array.from(new Set(allRows.map((it) => it.batch || '手动/初始'))).sort();
+    sel.innerHTML = '<option value="">全部批次</option>' +
+      batches.map((b) => '<option value="' + b + '">' + b + '</option>').join('');
+    sel.value = cur;
+  }
+
+  // 渲染列表（按当前筛选）
+  function renderList() {
+    const rows = getFiltered();
     listEl.innerHTML = '';
-    (res.list || []).forEach((it) => {
+    if (!rows.length) { listEl.innerHTML = '<div class="hint">没有符合条件的密码</div>'; return; }
+    rows.forEach((it) => {
+      const used = it.count || 0;
+      const avail = Math.max(0, MAX - used);
       const row = document.createElement('div');
       row.className = 'row';
       const pw = document.createElement('span'); pw.className = 'pw'; pw.textContent = it.password;
-      const ct = document.createElement('span'); ct.className = 'ct'; ct.textContent = '已用 ' + it.count + ' 次';
+      const bt = document.createElement('span'); bt.className = 'bt'; bt.textContent = it.batch || '手动/初始'; bt.title = it.batch || '手动/初始';
+      const st = document.createElement('span'); st.className = 'st ' + (avail > 0 ? 'ok' : 'no'); st.textContent = avail > 0 ? '可用' : '已用完';
+      const ct = document.createElement('span'); ct.className = 'ct'; ct.textContent = '已用 ' + used + ' / ' + MAX;
       const btn = document.createElement('button'); btn.className = 'del'; btn.textContent = '删除';
       btn.onclick = async () => {
         const r = await call('admin_remove_password', { p: it.password });
         if (r && r.ok) { showMsg('已删除 ' + it.password, true); await refresh(); }
         else showMsg((r && r.reason) || '删除失败', false);
       };
-      row.appendChild(pw); row.appendChild(ct); row.appendChild(btn);
+      row.appendChild(pw); row.appendChild(bt); row.appendChild(st); row.appendChild(ct); row.appendChild(btn);
       listEl.appendChild(row);
     });
+  }
+
+  async function refresh() {
+    const res = await call('admin_list', { admin_pw: adminPw });
+    if (!res || !res.ok) { showMsg(res && res.reason || '加载失败', false); return; }
+    allRows = res.list || [];
+    populateBatchFilter();
+    renderList();
   }
 
   async function doAdd() {
@@ -140,6 +190,40 @@
     URL.revokeObjectURL(a.href);
     showMsg('已导出 ' + lastGen.length + ' 个密码', true);
   }
+
+  // 导出 Excel（当前筛选结果），含自动筛选，可用/已用完/批次/生成时间等字段
+  async function doExportXlsx() {
+    if (typeof XLSX === 'undefined') { showMsg('Excel 组件未加载（请检查网络后刷新页面）', false); return; }
+    const rows = getFiltered();
+    if (!rows.length) { showMsg('没有可导出的密码', false); return; }
+    const data = rows.map((it) => {
+      const used = it.count || 0;
+      const avail = Math.max(0, MAX - used);
+      return {
+        '密码': it.password,
+        '批次': it.batch || '手动/初始',
+        '生成时间': fmtDate(it.created_at),
+        '已用次数': used,
+        '总次数上限': MAX,
+        '可用次数': avail,
+        '状态': avail > 0 ? '可用' : '已用完'
+      };
+    });
+    const ws = XLSX.utils.json_to_sheet(data, {
+      header: ['密码', '批次', '生成时间', '已用次数', '总次数上限', '可用次数', '状态']
+    });
+    ws['!cols'] = [
+      { wch: 22 }, { wch: 24 }, { wch: 20 }, { wch: 10 }, { wch: 12 }, { wch: 10 }, { wch: 10 }
+    ];
+    // 开启首行自动筛选（Excel 中可点列头按批次/状态筛选）
+    const range = XLSX.utils.decode_range(ws['!ref']);
+    ws['!autofilter'] = { ref: XLSX.utils.encode_range(range) };
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '测评密码');
+    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    XLSX.writeFile(wb, '测评密码_' + rows.length + '条_' + ts + '.xlsx');
+    showMsg('已导出 ' + rows.length + ' 条（含自动筛选）', true);
+  }
   function logout() {
     adminPw = '';
     dashSec.classList.add('hide');
@@ -154,5 +238,8 @@
   $('#chgBtn').onclick = doChange;
   $('#genBtn').onclick = doGenerate;
   $('#exportBtn').onclick = doExport;
+  $('#exportXlsxBtn').onclick = doExportXlsx;
+  $('#filterBatch').onchange = renderList;
+  $('#filterStatus').onchange = renderList;
   $('#logoutBtn').onclick = logout;
 })();

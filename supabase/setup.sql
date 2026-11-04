@@ -12,8 +12,14 @@ create extension if not exists pgcrypto;
 
 -- 1) 允许使用的测试密码
 create table if not exists public.passwords (
-  password text primary key
+  password   text primary key,
+  batch      text not null default '手动/初始',   -- 批次（批量生成时写入同一批次号）
+  created_at timestamptz not null default now()    -- 生成/入库时间
 );
+
+-- 1b) 兼容已存在的库：补齐 batch / created_at 两列（幂等）
+alter table public.passwords add column if not exists batch text not null default '手动/初始';
+alter table public.passwords add column if not exists created_at timestamptz not null default now();
 
 -- 2) 每个密码的使用次数
 create table if not exists public.usage (
@@ -87,13 +93,18 @@ begin
   return exists(select 1 from public.admin_config where key='admin_pw' and val=public.admin_pw_hash(admin_pw));
 end; $$;
 
--- 10) 列出密码 + 使用次数
+-- 10) 列出密码 + 使用次数 + 批次 + 生成时间
 create or replace function public.admin_list(admin_pw text) returns json
 language plpgsql security definer set search_path = public as $$
 begin
   if not public.admin_auth(admin_pw) then return json_build_object('ok',false,'reason','未授权'); end if;
   return json_build_object('ok',true,'list', (
-    select coalesce(json_agg(json_build_object('password', p.password, 'count', coalesce(u.count,0)) order by p.password), '[]'::json)
+    select coalesce(json_agg(json_build_object(
+      'password',   p.password,
+      'count',      coalesce(u.count,0),
+      'batch',      coalesce(p.batch, '手动/初始'),
+      'created_at', p.created_at
+    ) order by p.created_at desc, p.password), '[]'::json)
     from public.passwords p
     left join public.usage u on u.password = p.password
   ));
@@ -138,22 +149,28 @@ begin
   return json_build_object('ok',true);
 end; $$;
 
--- 15) 批量生成测评密码（高强度随机，生成后直接入库可用）
+-- 15) 批量生成测评密码（高强度随机，生成后直接入库可用，并归入同一批次）
 create or replace function public.admin_generate_passwords(n int, admin_pw text) returns json
 language plpgsql security definer set search_path = public, extensions as $$
 declare
   i int;
   pw text;
   arr text[] := '{}';
+  v_batch text;
 begin
   if not public.admin_auth(admin_pw) then return json_build_object('ok',false,'reason','未授权'); end if;
   if n is null or n < 1 or n > 200 then return json_build_object('ok',false,'reason','数量需在 1-200 之间'); end if;
+  -- 批次号：B + 时间戳 + 8 位随机，保证可读且唯一
+  v_batch := 'B' || to_char(now(),'YYYYMMDD_HH24MISS') || '_' || substring(encode(extensions.gen_random_bytes(4),'hex'),1,8);
   for i in 1..n loop
     pw := encode(extensions.gen_random_bytes(8),'hex');
-    insert into public.passwords(password) values (pw) on conflict (password) do nothing;
+    begin
+      insert into public.passwords(password, batch) values (pw, v_batch) on conflict (password) do nothing;
+    exception when others then null;  -- 极小概率碰撞，跳过
+    end;
     arr := array_append(arr, pw);
   end loop;
-  return json_build_object('ok',true,'list', to_json(arr));
+  return json_build_object('ok',true,'list', to_json(arr), 'batch', v_batch);
 end; $$;
 
 -- 16) 授权匿名调用（仅这些后台函数，无法直接读表）

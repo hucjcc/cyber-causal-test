@@ -20,6 +20,14 @@
   .row:last-child{border-bottom:none}
   .row .pw{flex:1;font-family:monospace;color:var(--cyan)}
   .row .ct{color:var(--sub);font-size:13px}
+  .row .bt{width:160px;color:var(--sub);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .row .st{width:60px;text-align:center;font-size:12px}
+  .row .st.ok{color:var(--cyan)}
+  .row .st.no{color:#ff8fb0}
+  .filterbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
+  .filterbar select{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:rgba(7,6,15,.7);color:#e8f6ff;font-size:13px}
+  .head .bt{flex:none;width:160px}
+  .head .st{flex:none;width:60px;text-align:center}
   .msg{min-height:18px;font-size:13px;margin-bottom:6px}
   hr{border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0}
   .head{display:flex;gap:12px;padding-bottom:4px;color:var(--sub);font-size:13px}
@@ -40,7 +48,21 @@
   </div>
 
   <div id="dashSec" class="card hide">
-    <div class="head"><b>密码</b><span>使用次数</span></div>
+    <div class="head">
+      <b>密码</b>
+      <span class="bt">批次</span>
+      <span class="st">状态</span>
+      <span>使用次数</span>
+    </div>
+    <div class="filterbar">
+      <select id="filterBatch"><option value="">全部批次</option></select>
+      <select id="filterStatus">
+        <option value="">全部状态</option>
+        <option value="ok">可用</option>
+        <option value="no">已用完</option>
+      </select>
+      <button id="exportXlsxBtn" class="ghost">导出 Excel（当前筛选）</button>
+    </div>
     <div id="list"></div>
     <div id="dashMsg" class="msg"></div>
 
@@ -75,6 +97,7 @@
     <button id="logoutBtn" class="ghost">退出登录</button>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="config.js"></script>
 <script src="admin.js"></script>
 </body>
